@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: "Solving Cho Chikun Life-and-Death Problems on a Single RTX 5090"
+description: "A cross-generation 2x2 benchmark (hardware x algorithm) of the RZ-based L&D solver — Technical Report"
+lang: ja
