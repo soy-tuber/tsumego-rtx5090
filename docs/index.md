@@ -9,11 +9,13 @@ Companion report (same RTX 5090, the *opposite* bottleneck): [Solving 7×7 Killa
 
 ### Abstract (EN)
 
-We reproduce the relevance-zone (RZ) based life-and-death solver of Shih et al. (IEEE ToG 2025, *A Study of Solving Life-and-Death Problems in Go Using Relevance-Zone Based Solvers*) on a single consumer machine (RTX 5090 / Core Ultra 9 285K, WSL2), and sweep the 117 bundled Cho Chikun problems under the paper's own 5-minute limit. Holding the code, problems, and configuration fixed, we vary only (a) the hardware generation and (b) the algorithm (RZS-TT vs RZS-PT), yielding a clean **2×2 matrix** that separates the hardware contribution from the algorithm contribution with no cross-machine confound. On the newer machine the proved count rises to **84/117 (RZS-TT)** and **88/117 (RZS-PT)**, versus the paper's reported **68/106** and **83/106**. The same-machine TT→PT delta (**+4**, with 5 gains and 1 regression) isolates the pattern-table contribution. Crucially, the neural network is tiny (765,523 parameters) and the GPU sits at **~23% utilization**: this is a **CPU-generation** benchmark (Haswell 2014 → Arrow Lake 2024, with a **12× larger per-core L2 cache**), not a GPU one — the mirror image of our GPU-bound killall-go report. We additionally (i) find and fix a deterministic segfault in the `USE_POTENTIAL_RZONE` code path (upstream issue + patch), (ii) document that the `USE_EARLY_LIFE`/`USE_PATTERN_EYE` knowledge flags are **unsound** for proof purposes (they emit 0-simulation false positives), and (iii) establish a 28-problem **method-limited frontier** that no amount of extra time or the current RZ machinery cracks.
+We reproduce the relevance-zone (RZ) based life-and-death solver of Shih et al. (IEEE ToG 2025, *A Study of Solving Life-and-Death Problems in Go Using Relevance-Zone Based Solvers*) on a single consumer machine (RTX 5090 / Core Ultra 9 285K, WSL2), and sweep the 117 bundled Cho Chikun problems under the paper's own 5-minute limit. Holding the code, problems, and configuration fixed, we vary only (a) the hardware generation and (b) the algorithm (RZS-TT vs RZS-PT), yielding a clean **2×2 matrix** that separates the hardware contribution from the algorithm contribution with no cross-machine confound. On the newer machine the proved count rises to **84/117 (RZS-TT)** and **88/117 (RZS-PT)**, versus the paper's reported **68/106** and **83/106**. The same-machine TT→PT delta (**+4**, with 5 gains and 1 regression) isolates the pattern-table contribution. Crucially, the neural network is tiny (765,523 parameters) and the GPU sits at **~23% utilization**: this is a **CPU-generation** benchmark (Haswell 2014 → Arrow Lake 2024, with a **12× larger per-core L2 cache**), not a GPU one — the mirror image of our GPU-bound killall-go report. We additionally (i) find and fix a deterministic segfault in the `USE_POTENTIAL_RZONE` code path (upstream issue + patch), (ii) document that the `USE_EARLY_LIFE`/`USE_PATTERN_EYE` knowledge flags are **unsound** for proof purposes (they emit 0-simulation false positives), and (iii) establish a 28-problem frontier that resists seki-DB, RZ-reduction, and extra time. **Update (§11, 2026-07-20): this "method-limited" conclusion is overturned** — raising `NUM_THREAD` from 2 to 20 soundly cracks **27 of the 28** via parallel-search diversification, reaching **116/117**; only `vol2_p262` remains (memory-bound).
 
 ### 要旨(JP)
 
-RZ(relevance-zone)ベースの死活ソルバ(Shih et al., IEEE ToG 2025)を単一のRTX 5090 + Core Ultra 9 285K(WSL2)で再現し、同梱の趙治勲事典117問を論文条件(5分制限)でスイープした。コード・問題・設定を固定し、(a)ハード世代と(b)アルゴリズム(RZS-TT/RZS-PT)だけを変えることで、**ハード寄与とアルゴリズム寄与を交絡なしで分離する2×2行列**を得た。証明数は新機で**84/117(TT)・88/117(PT)**(論文報告値68/106・83/106)。同一マシン上のTT→PT差(**+4**、救済5・回帰1)がパターンテーブルの純寄与。NNは極小(765,523params)でGPU実利用率は**約23%**——本研究は**CPU世代ベンチ**(Haswell 2014→Arrow Lake 2024、**L2キャッシュ12倍**)であり、GPU律速のkillall-go編とは律速点が逆。加えて(i)`USE_POTENTIAL_RZONE`経路の決定的segfaultを特定・修正(upstream issue+patch)、(ii)`USE_EARLY_LIFE`/`USE_PATTERN_EYE`知識フラグが証明目的には**不健全**(sims=0の偽陽性)であることを実証、(iii)追加時間でも現行RZ手法でも崩せない**手法律速の28問フロンティア**を確定した。
+RZ(relevance-zone)ベースの死活ソルバ(Shih et al., IEEE ToG 2025)を単一のRTX 5090 + Core Ultra 9 285K(WSL2)で再現し、同梱の趙治勲事典117問を論文条件(5分制限)でスイープした。コード・問題・設定を固定し、(a)ハード世代と(b)アルゴリズム(RZS-TT/RZS-PT)だけを変えることで、**ハード寄与とアルゴリズム寄与を交絡なしで分離する2×2行列**を得た。証明数は新機で**84/117(TT)・88/117(PT)**(論文報告値68/106・83/106)。同一マシン上のTT→PT差(**+4**、救済5・回帰1)がパターンテーブルの純寄与。NNは極小(765,523params)でGPU実利用率は**約23%**——本研究は**CPU世代ベンチ**(Haswell 2014→Arrow Lake 2024、**L2キャッシュ12倍**)であり、GPU律速のkillall-go編とは律速点が逆。加えて(i)`USE_POTENTIAL_RZONE`経路の決定的segfaultを特定・修正(upstream issue+patch)、(ii)`USE_EARLY_LIFE`/`USE_PATTERN_EYE`知識フラグが証明目的には**不健全**(sims=0の偽陽性)であることを実証、(iii)セキDB・RZ縮小・追加時間に抵抗する28問フロンティアを確定した。
+
+> **⚡ 追記 (2026-07-20)**: 上記(iii)の「手法律速」という結論は**覆った**。ソルバのスレッド数を既定の2から**20**に上げるだけで、28問中**27問がsoundに崩れ**(健全性検証済み)、best-ofで**116/117**に到達した。残るは`vol2_p262`ただ1問(真のメモリ律速)。全実験でスレッド数を2に固定していたことが、誤った「手法律速」結論を生んでいた。詳細は**§11**。
 
 ---
 
@@ -96,7 +98,7 @@ TT・PT両方が全走行で未解の問題は **28問**(vol1: p090/p098/p150の
 - **ドメイン不一致**: 検証は7×7 killall-goの単一開局内の類似局面(同じ探索木内で局所形が大量に共有される)のみ。19路事典の117問(互いに無関係な独立問題)への適用は原論文でも未検証・将来課題止まり。
 - **コード非公開**: RZR専用実装はrlglab GitHub(14リポジトリ確認)に存在しない。
 
-**教訓**: 数値の"向き"(圧縮率か縮小後の残存率か)と適用対象(解決済み前提か否か)は、要約でなく原論文の精読で確認すべきだった。当初「セキDB/RZ縮小/CGTのいずれかでフロンティアを崩せる」という前提自体が、この診断により大きく修正された。
+**教訓**: 数値の"向き"(圧縮率か縮小後の残存率か)と適用対象(解決済み前提か否か)は、要約でなく原論文の精読で確認すべきだった。当初「セキDB/RZ縮小/CGTのいずれかでフロンティアを崩せる」という前提自体が、この診断により大きく修正された。 **(なお§11のとおり、フロンティアの大半は"手法"でなく"探索の並列性"で解けたため、この§9が前提とした「フロンティアを崩す手法」という枠組み自体が後に覆った。)**
 
 ## 10. Threats to Validity / 今後
 
@@ -105,6 +107,49 @@ TT・PT両方が全走行で未解の問題は **28問**(vol1: p090/p098/p150の
 - **単一走行/単一ハード**: 走行間分散は小(§3)だが、他世代CPUでの制御実験は未実施。
 - **RZone TTの解順依存**: PTは問題間でRZを永続再利用するため、単一セッション内の解順に依存しうる(本走行は全117問を1プロセスで一括処理)。
 - **今後**: §9の診断により、フロンティア28問は深さ/複雑度律速と確定したが、セキDB・RZ縮小はともに不適合と判明した。残る筋はCGT厳密求解(詰碁は単一攻防が多く分解しにくいという保留あり、未検証)、または探索・学習側の正攻法強化。NN難判定部分木→CGT厳密求解のハイブリッドは依然未開拓。
+
+## 11. 追記 (2026-07-20): 並列探索でフロンティアを突破 — 116/117
+
+§6・§9で「28問フロンティアは手法律速で、追加時間でも現行RZ手法でも崩せない」と結論した。**この結論は誤りだった。** 原因は、上記の全実験でソルバのスレッド数を既定の `NUM_THREAD=2` に固定していたこと。これを **20 に上げるだけ**で、28問中 **27問が `UCT_WIN` で崩れた**。
+
+### 機序
+
+20スレッドの並列MCTSは virtual loss により各スレッドを強制的に異なるノードへ分散させる。2スレッドでは両者が同じ(極小の)方策ネットに引きずられて同一の不毛な部分木に嵌り、`MAX_PAGE`(512)を埋め尽くして UNKNOWN になっていた。20スレッドは急所手を早期に発見し、pool full 前に証明を閉じる。効いたのは「より多くの計算」ではなく「**罠を抜ける多様化**」で、必要 sims はむしろ激減した:
+
+```
+問題         2スレッド(既定)           20スレッド
+vol1_p090   443,699 sims → UNKNOWN    1,521 sims → WIN
+vol2_p124   (300s未解)                62,929 sims → WIN
+vol2_p158   (300s未解)                955,442 sims → WIN (証明木265MB)
+```
+
+### 結果
+
+全20スレッド走行の best-of union で **116/117 を証明 (99.1%)**。§6の28問フロンティアのうち **27問が崩れた**。
+
+```
+                        proved
+論文 RZS-TT (1080Ti)      68 / 106
+本機 2スレッド RZS-TT      84 / 117
+本機 2スレッド RZS-PT      88 / 117
+本機 20スレッド            116 / 117   ★
+```
+
+### 健全性検証
+
+新規WINは全て実 sims・実体ある証明木(947KB〜343MB)・crucial stones 付きで、§8の偽陽性パターン(sims=0/best=PASS/極小木)はゼロ。再現テスト(4問再走)で判定・crucial stones が一致(vol2_p124/p158は sims 数まで同一=ほぼ決定的)。既解問題のsanityも維持し、LOSS・書籍解答との矛盾はゼロ(全問 TOLIVE=活き側勝ちと整合)。並列AND/OR証明のrace由来偽陽性なら「判定がブレる・証明木が退化する」はずが、観測はすべて逆。**独立プルーフチェッカーによる第三者検証のみ未実施(将来課題)。**
+
+### 残る1問: vol2_p262
+
+22スレッド・`MAX_PAGE`=600・48G・30分の押し込みでも、600ページ(証明木343MB)を埋め尽くして未証明。他の境界問題(走行毎にWIN/UNKNOWNが揺れ、best-ofで解決)と異なり、p262は「運のいい走行で解ける」型ではない ── その証明木は本機の55GB WSL枠(Windows分を残す必要)に収まらない**真のメモリ律速**。突破には省メモリな証明探索(df-pnのディスク退避等)か、より賢いPCNで少ノードで閉じる学習が要る(次フェーズ)。
+
+### メモリ安全設計
+
+全走行を cgroup `MemoryMax`(40〜48G, swap無効)下で実行。難問が上限に触れた際はカーネルが CGI プロセスのみ OOM-kill し、**WSLは一度も落ちなかった**。要点: 並列は「別々の問題を同時実行」(探索木が独立に増えメモリ×並列数=以前クラッシュした形)ではなく「**1問に多スレッド(探索木を共有)**」なのでメモリは増えない。問題間バッチは盤面TTの累積でOOMするため、1問ずつ独立プロセスで実行した。
+
+### 教訓
+
+「手法律速」と結論する前に、最も基本的なパラメータ(スレッド数)の掃引を怠っていた。**負の結論は、実際に探索したパラメータ空間の内側でのみ有効である。** セキDB・RZ縮小を「フロンティアに不適合」とした§9の判断は手法単体としては正しくとも、フロンティアの大半が"手法"でなく"並列性"で解けた以上、その前提(手法でフロンティアを崩す)自体が失われた。
 
 ## 引用
 

@@ -8,7 +8,7 @@ Key results:
 - 2×2 matrix: RZS-TT **84/117**, RZS-PT **88/117** (paper: 68/106, 83/106)
 - Same-machine TT→PT = **+4** (isolated algorithm contribution, no confound)
 - **CPU-bound** (GPU ~23% idle, tiny 765k-param net) — a CPU/L2-cache generational benchmark, the mirror image of the GPU-bound [killall-go report](https://soy-tuber.github.io/killallgo-rtx5090/)
-- A 28-problem **method-limited frontier**; a fixed `USE_POTENTIAL_RZONE` segfault; a negative result on unsound knowledge flags
-- Frontier diagnosis: not seki-limited, not ko-rule-limited (verified experimentally), and seki-DB / RZ-reduction (arXiv:2510.00689) both turn out inapplicable on close reading — see §9
+- A fixed `USE_POTENTIAL_RZONE` segfault; a negative result on unsound knowledge flags
+- **Update (2026-07-20, §11): 116/117 proved.** The "28-problem method-limited frontier" conclusion was overturned — raising `NUM_THREAD` from 2 to 20 soundly cracks 27 of the 28 via parallel-search diversification (e.g. vol1_p090: 443k sims→UNKNOWN at 2 threads vs 1,521 sims→WIN at 20). Only `vol2_p262` remains, genuinely memory-bound. All runs stayed inside a cgroup memory cap; WSL never crashed.
 
 Reproduction — full credit to the original authors; this work only swaps the hardware and measures the difference.
