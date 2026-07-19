@@ -9,5 +9,6 @@ Key results:
 - Same-machine TT→PT = **+4** (isolated algorithm contribution, no confound)
 - **CPU-bound** (GPU ~23% idle, tiny 765k-param net) — a CPU/L2-cache generational benchmark, the mirror image of the GPU-bound [killall-go report](https://soy-tuber.github.io/killallgo-rtx5090/)
 - A 28-problem **method-limited frontier**; a fixed `USE_POTENTIAL_RZONE` segfault; a negative result on unsound knowledge flags
+- Frontier diagnosis: not seki-limited, not ko-rule-limited (verified experimentally), and seki-DB / RZ-reduction (arXiv:2510.00689) both turn out inapplicable on close reading — see §9
 
 Reproduction — full credit to the original authors; this work only swaps the hardware and measures the difference.
