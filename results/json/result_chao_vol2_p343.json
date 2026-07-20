@@ -1,0 +1,22 @@
+{
+ "ProblemSgfFilename": "chao_vol2_p343.sgf",
+ "ProblemSgfUctTreeFilename": "result/uct_tree_chao_vol2_p343.esgf",
+ "NumSimulations": 8169,
+ "Time": 1.758,
+ "BlackCrucialStone": "",
+ "WhiteCrucialStone": "os rq ",
+ "BestMove": "S1",
+ "BestMoveWinrate": 0.669838,
+ "BestMoveCount": 2413,
+ "BestMovePolicy": 0.0275093,
+ "BestMoveVN": -0.671922,
+ "RootStatus": "UCT_WIN",
+ "NumLeafBenson": 113,
+ "NumTTmatched": 64,
+ "NumTerminal": 8,
+ "NumKos": 0,
+ "NumLongKos": 0,
+ "NumRZoneFailed": 0,
+ "TimeOfImmediateWin": 0.00195758,
+ "NumKosInSolution": 0
+}

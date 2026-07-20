@@ -1,0 +1,36 @@
+diff --git a/CGI/WeichiQuickWinHandler.cpp b/CGI/WeichiQuickWinHandler.cpp
+index bc17de8..c0ab161 100644
+--- a/CGI/WeichiQuickWinHandler.cpp
++++ b/CGI/WeichiQuickWinHandler.cpp
+@@ -217,6 +217,7 @@ bool WeichiQuickWinHandler::hasPotentialRZone(const WeichiDragon& dragon, Weichi
+         int pos = 0;
+         while ((pos = bmTestStones.bitScanForward()) != -1) {
+             WeichiMove move(winColor, pos);
++            if (m_board.getGrid(pos).getColor() != COLOR_NONE) { continue; }  // skip occupied connector (guard from line ~138); avoids null block in play()->updateSiblings
+             m_board.play(move);
+             bmPlayed.SetBitOn(pos);
+             if (m_board.getGrid(pos).getBlock()->getStatus() == LAD_LIFE) {
+@@ -255,6 +256,7 @@ bool WeichiQuickWinHandler::hasBensonSequence(const WeichiDragon& dragon, Weichi
+     int pos = 0;
+     while ((pos = bmPossibleConnector.bitScanForward()) != -1) {
+         WeichiMove move(winColor, pos);
++        if (m_board.getGrid(pos).getColor() != COLOR_NONE) { continue; }  // skip occupied connector (guard from line ~138); avoids null block in play()->updateSiblings
+         m_board.play(move);
+         bmRetPlayed.SetBitOn(pos);
+         if (m_board.getGrid(pos).getBlock()->getStatus() == LAD_LIFE) {
+@@ -287,6 +289,7 @@ bool WeichiQuickWinHandler::hasBensonSequence(const WeichiDragon& dragon, Weichi
+             int pos = 0;
+             while ((pos = bmPossibleConnector.bitScanForward()) != -1) {
+                 WeichiMove move(winColor, pos);
++                if (m_board.getGrid(pos).getColor() != COLOR_NONE) { continue; }  // skip occupied connector (guard from line ~138); avoids null block in play()->updateSiblings
+                 m_board.play(move);
+                 bmRetPlayed.SetBitOn(pos);
+                 if (m_board.getGrid(pos).getBlock()->getStatus() == LAD_LIFE) {
+@@ -334,6 +337,7 @@ bool WeichiQuickWinHandler::hasBensonSequence(const WeichiDragon& dragon, Weichi
+                 int pos = 0;
+                 while ((pos = bmPossibleConnector.bitScanForward()) != -1) {
+                     WeichiMove move(winColor, pos);
++                    if (m_board.getGrid(pos).getColor() != COLOR_NONE) { continue; }  // skip occupied connector (guard from line ~138); avoids null block in play()->updateSiblings
+                     m_board.play(move);
+                     bmRetPlayed.SetBitOn(pos);
+                     if (m_board.getGrid(pos).getBlock()->getStatus() == LAD_LIFE) {
